@@ -227,7 +227,6 @@ export default function Billing() {
           <div className="billing-stat-icon"><CreditCard /></div>
           <span>Payments Recorded</span>
           <h2>{totals.count}</h2>
-          <small>Payments returned by the API</small>
         </div>
       </div>
 

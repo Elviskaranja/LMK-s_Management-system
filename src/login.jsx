@@ -152,7 +152,7 @@ export default function Login({ onLogin }) {
                   id="login-email"
                   name="email"
                   type="email"
-                  placeholder="you@firm.com"
+                  placeholder="username@domainname.com"
                   value={email}
                   onChange={handleEmailChange}
                   autoComplete="username"
