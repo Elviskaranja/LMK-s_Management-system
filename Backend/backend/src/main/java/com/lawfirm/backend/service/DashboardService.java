@@ -54,9 +54,10 @@ public class DashboardService {
         long upcomingHearingsCount =
                 hearingRepository.countHearingsInRange(startOfToday, endOfRange);
 
-        BigDecimal outstandingFees = invoiceRepository.sumUnpaidInvoiceAmounts()
-                .subtract(paymentRepository.sumPaymentsForUnpaidInvoices())
-                .max(BigDecimal.ZERO);
+        BigDecimal totalInvoiced = invoiceRepository.sumTotalInvoiceAmounts();
+        BigDecimal totalPayments = paymentRepository.sumAllPayments();
+        long paymentsRecorded = paymentRepository.countAllPayments();
+        BigDecimal outstandingFees = invoiceRepository.sumOutstandingBalancesAcrossInvoices();
 
         List<Case> recentCases = caseRepository.findTop5ByOrderByCreatedAtDesc();
         Map<Integer, LocalDateTime> nextHearingDates = recentCases.isEmpty()
@@ -91,6 +92,9 @@ public class DashboardService {
                 activeCases,
                 totalClients,
                 upcomingHearingsCount,
+                totalInvoiced,
+                totalPayments,
+                paymentsRecorded,
                 outstandingFees,
                 invoiceRepository.countUnpaidInvoices(),
                 invoiceRepository.countOverdueUnpaidInvoices(today),

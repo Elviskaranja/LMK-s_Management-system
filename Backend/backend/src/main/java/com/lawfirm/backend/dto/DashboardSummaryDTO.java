@@ -9,6 +9,9 @@ public class DashboardSummaryDTO {
     private final long activeCases;
     private final long totalClients;
     private final long upcomingHearingsCount;
+    private final BigDecimal totalInvoiced;
+    private final BigDecimal totalPayments;
+    private final long paymentsRecorded;
     private final BigDecimal outstandingFees;
     private final long unpaidInvoicesCount;
     private final long overdueInvoicesCount;
@@ -19,6 +22,9 @@ public class DashboardSummaryDTO {
             long activeCases,
             long totalClients,
             long upcomingHearingsCount,
+            BigDecimal totalInvoiced,
+            BigDecimal totalPayments,
+            long paymentsRecorded,
             BigDecimal outstandingFees,
             long unpaidInvoicesCount,
             long overdueInvoicesCount,
@@ -27,6 +33,9 @@ public class DashboardSummaryDTO {
         this.activeCases = activeCases;
         this.totalClients = totalClients;
         this.upcomingHearingsCount = upcomingHearingsCount;
+        this.totalInvoiced = totalInvoiced;
+        this.totalPayments = totalPayments;
+        this.paymentsRecorded = paymentsRecorded;
         this.outstandingFees = outstandingFees;
         this.unpaidInvoicesCount = unpaidInvoicesCount;
         this.overdueInvoicesCount = overdueInvoicesCount;
@@ -44,6 +53,18 @@ public class DashboardSummaryDTO {
 
     public long getUpcomingHearingsCount() {
         return upcomingHearingsCount;
+    }
+
+    public BigDecimal getTotalInvoiced() {
+        return totalInvoiced;
+    }
+
+    public BigDecimal getTotalPayments() {
+        return totalPayments;
+    }
+
+    public long getPaymentsRecorded() {
+        return paymentsRecorded;
     }
 
     public BigDecimal getOutstandingFees() {

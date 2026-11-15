@@ -142,7 +142,34 @@
   color: #292723;
 }
 
+.billing-case-filter {
+  display: flex;
+  gap: 7px;
+}
+
+.billing-case-filter input {
+  width: 100px;
+  border: 1px solid #e8e5df;
+  border-radius: 7px;
+  padding: 10px;
+  outline: none;
+}
+
+.billing-case-filter input:focus {
+  border-color: #b18c48;
+}
+
+.billing-filter-btn {
+  border: 1px solid #d7c59e;
+  border-radius: 7px;
+  background: #fff;
+  color: #92713a;
+  padding: 0 11px;
+  cursor: pointer;
+}
+
 .billing-toolbar select,
+.billing-modal select,
 .billing-modal input,
 .billing-modal textarea {
   border: 1px solid #e8e5df;
@@ -154,6 +181,7 @@
 }
 
 .billing-toolbar select:focus,
+.billing-modal select:focus,
 .billing-modal input:focus,
 .billing-modal textarea:focus {
   border-color: #b18c48;
@@ -164,6 +192,79 @@
   box-sizing: border-box;
   resize: vertical;
   font: inherit;
+}
+
+.billing-readonly-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: #f9f5ee;
+  border: 1px solid #f0e4cc;
+  border-radius: 8px;
+}
+
+.billing-readonly-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.billing-readonly-grid span {
+  font-size: 11px;
+  color: #7c756d;
+}
+
+.billing-readonly-grid strong {
+  font-size: 13px;
+  color: #2f2c28;
+}
+
+.billing-readonly-grid-compact {
+  grid-template-columns: 1fr;
+  margin-top: 8px;
+}
+
+.billing-client-details {
+  display: grid;
+  gap: 8px;
+}
+
+.billing-client-details input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.invoice-status {
+  display: inline-block;
+  border-radius: 20px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.invoice-status-unpaid {
+  background: #f7e9e5;
+  color: #914d3e;
+}
+
+.invoice-status-partially-paid {
+  background: #f8f1df;
+  color: #8d6a25;
+}
+
+.invoice-status-paid {
+  background: #e7f2e9;
+  color: #39734b;
+}
+
+.invoice-status-note {
+  display: block;
+  color: #89847b;
+  font-size: 11px;
+  margin-top: 6px;
 }
 
 .billing-table-scroll {
@@ -273,6 +374,7 @@
   margin: 13px 0 7px;
 }
 
+.billing-modal > select,
 .billing-modal > input,
 .billing-modal > textarea {
   width: 100%;
@@ -304,6 +406,11 @@
   .billing-toolbar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .billing-case-filter input {
+    flex: 1;
+    width: auto;
   }
 
   .billing-heading h1 {

@@ -116,7 +116,7 @@ export default function Login({ onLogin }) {
 
         <div className="auth-brand-footer">
           <span>BUILT ON TRUST. DRIVEN BY DETAIL.</span>
-          <span className="auth-footer-mark">H&amp;C</span>
+          <span className="auth-footer-mark">LMK</span>
         </div>
       </section>
 
@@ -152,7 +152,7 @@ export default function Login({ onLogin }) {
                   id="login-email"
                   name="email"
                   type="email"
-                  placeholder="you@firm.com"
+                  placeholder="username@domainname.com"
                   value={email}
                   onChange={handleEmailChange}
                   autoComplete="username"

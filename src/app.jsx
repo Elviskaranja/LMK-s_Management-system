@@ -4,6 +4,7 @@ import Cases from "./cases.jsx";
 import Appointments from "./appointments.jsx";
 import Documents from "./documents.jsx";
 import Billing from "./billing.jsx";
+import Invoices from "./invoices.jsx";
 import Settings from "./settings.jsx";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "./useAuth.js";
@@ -16,6 +17,7 @@ import {
   CalendarDays,
   Files,
   CreditCard,
+  ReceiptText,
   Settings as SettingsIcon,
   Search,
   Bell,
@@ -40,8 +42,9 @@ const navGroups = [
   {
     heading: "Records",
     items: [
-      { label: "Document Register", page: "Documents", icon: Files },
+      { label: "Invoices", page: "Invoices", icon: ReceiptText },
       { label: "Payments", page: "Billing", icon: CreditCard },
+      { label: "Document Register", page: "Documents", icon: Files },
     ],
   },
   {
@@ -287,7 +290,6 @@ function App() {
                 >
                   <Icon size={19} strokeWidth={1.7} />
                   <span>{label}</span>
-                  {page === "Cases" && <span className="nav-count">24</span>}
                 </button>
               ))}
             </div>
@@ -417,6 +419,9 @@ function App() {
           )
           : activePage === "Billing" ? (
             <Billing />
+          )
+          : activePage === "Invoices" ? (
+            <Invoices />
           )
           : activePage === "Settings" ? (
             <Settings />

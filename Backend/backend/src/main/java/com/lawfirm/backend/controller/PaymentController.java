@@ -22,8 +22,15 @@ public class PaymentController {
     }
 
     @GetMapping
-    public List<Payment> getAllPayments() {
-        return paymentService.getAllPayments();
+    public List<Payment> getAllPayments(
+            @RequestParam(required = false) Integer caseId,
+            @RequestParam(required = false) Integer invoiceId) {
+        if (invoiceId != null) {
+            return paymentService.getPaymentsByInvoiceId(invoiceId);
+        }
+        return caseId == null
+                ? paymentService.getAllPayments()
+                : paymentService.getPaymentsByCaseId(caseId);
     }
 
     @GetMapping("/{id}")
