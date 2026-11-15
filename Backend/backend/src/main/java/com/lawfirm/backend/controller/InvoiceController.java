@@ -22,8 +22,10 @@ public class InvoiceController {
     }
 
     @GetMapping
-    public List<Invoice> getAllInvoices() {
-        return invoiceService.getAllInvoices();
+    public List<Invoice> getAllInvoices(@RequestParam(required = false) Integer caseId) {
+        return caseId == null
+                ? invoiceService.getAllInvoices()
+                : invoiceService.getInvoicesByCaseId(caseId);
     }
 
     @GetMapping("/{id}")

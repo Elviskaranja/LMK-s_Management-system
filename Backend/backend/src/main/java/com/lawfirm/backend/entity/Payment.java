@@ -1,6 +1,8 @@
 
 package com.lawfirm.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +20,10 @@ public class Payment {
     @JoinColumn(name = "invoice_id", nullable = false)
     private Invoice invoice;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "case_id")
+    private Case legalCase;
+
     @Column(name = "payment_date")
     private LocalDateTime paymentDate;
 
@@ -32,6 +38,9 @@ public class Payment {
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public Payment() {
     }
@@ -50,6 +59,20 @@ public class Payment {
 
     public void setInvoice(Invoice invoice) {
         this.invoice = invoice;
+    }
+
+    @JsonIgnore
+    public Case getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(Case legalCase) {
+        this.legalCase = legalCase;
+    }
+
+    @JsonProperty(value = "caseId", access = JsonProperty.Access.READ_ONLY)
+    public Integer getCaseId() {
+        return legalCase == null ? null : legalCase.getCaseId();
     }
 
     public LocalDateTime getPaymentDate() {
@@ -90,5 +113,9 @@ public class Payment {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

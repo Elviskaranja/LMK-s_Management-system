@@ -116,7 +116,7 @@ export default function Login({ onLogin }) {
 
         <div className="auth-brand-footer">
           <span>BUILT ON TRUST. DRIVEN BY DETAIL.</span>
-          <span className="auth-footer-mark">H&amp;C</span>
+          <span className="auth-footer-mark">LMK</span>
         </div>
       </section>
 

@@ -29,6 +29,15 @@ const formatCurrency = (amount) =>
     maximumFractionDigits: 2,
   }).format(Number(amount) || 0);
 
+function paidForInvoice(payments, invoiceId, excludedPaymentId) {
+  return payments
+    .filter((payment) =>
+      Number(invoiceIdOf(payment)) === Number(invoiceId) &&
+      payment.paymentId !== excludedPaymentId
+    )
+    .reduce((sum, payment) => sum + (Number(payment.amount) || 0), 0);
+}
+
 function formatPaymentDate(value) {
   if (!value) return "—";
 
@@ -51,12 +60,14 @@ function invoiceLabelOf(payment) {
 
 export default function Billing() {
   const [payments, setPayments] = useState([]);
+  const [invoices, setInvoices] = useState([]);
   const [search, setSearch] = useState("");
   const [methodFilter, setMethodFilter] = useState("All");
   const [showModal, setShowModal] = useState(false);
   const [editingPayment, setEditingPayment] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(true);
+  const [invoicesLoading, setInvoicesLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -73,8 +84,20 @@ export default function Billing() {
     }
   }
 
+  async function loadInvoices() {
+    setInvoicesLoading(true);
+    try {
+      setInvoices(asArray(await api.get("/invoices")));
+    } catch (loadError) {
+      setError(`Could not load invoices for payment recording: ${loadError.message}`);
+    } finally {
+      setInvoicesLoading(false);
+    }
+  }
+
   useEffect(() => {
-    loadPayments();
+    Promise.resolve().then(() => loadPayments());
+    Promise.resolve().then(() => loadInvoices());
   }, []);
 
   const totals = useMemo(
@@ -95,6 +118,19 @@ export default function Billing() {
     [payments],
   );
 
+  const selectedInvoice = invoices.find(
+    (invoice) => String(invoice.invoiceId) === String(form.invoiceId)
+  );
+  const paidSoFar = selectedInvoice
+    ? paidForInvoice(payments, selectedInvoice.invoiceId, editingPayment?.paymentId)
+    : 0;
+  const amountCharged = Number(selectedInvoice?.totalAmount) || 0;
+  const outstandingBeforePayment = Math.max(amountCharged - paidSoFar, 0);
+  const remainingBalance = Math.max(
+    outstandingBeforePayment - (Number(form.amount) || 0),
+    0
+  );
+
   const filteredPayments = useMemo(() => {
     const query = search.trim().toLowerCase();
 
@@ -103,6 +139,7 @@ export default function Billing() {
         payment.paymentId,
         invoiceLabelOf(payment),
         invoiceIdOf(payment),
+        payment.caseId,
         payment.paymentMethod,
         payment.referenceNumber,
         payment.notes,
@@ -343,16 +380,41 @@ export default function Billing() {
             </div>
 
             <label htmlFor="payment-invoice-id">Invoice ID</label>
-            <input
+            <select
               id="payment-invoice-id"
               required
-              type="number"
-              min="1"
               name="invoiceId"
               value={form.invoiceId}
               onChange={updateField}
-              placeholder="Enter the existing invoice ID"
-            />
+              disabled={invoicesLoading}
+            >
+              <option value="">
+                {invoicesLoading ? "Loading invoices..." : "Select a registered invoice"}
+              </option>
+              {invoices.map((invoice) => (
+                <option key={invoice.invoiceId} value={invoice.invoiceId}>
+                  {invoice.invoiceNumber || `Invoice #${invoice.invoiceId}`} · Case{" "}
+                  {invoice.legalCase?.caseId ?? invoice.caseId ?? "—"}
+                </option>
+              ))}
+            </select>
+
+            {selectedInvoice && (
+              <div className="billing-readonly-grid">
+                <div>
+                  <span>Total amount charged</span>
+                  <strong>{formatCurrency(amountCharged)}</strong>
+                </div>
+                <div>
+                  <span>Previously paid</span>
+                  <strong>{formatCurrency(paidSoFar)}</strong>
+                </div>
+                <div>
+                  <span>Outstanding after this payment</span>
+                  <strong>{formatCurrency(remainingBalance)}</strong>
+                </div>
+              </div>
+            )}
 
             <label htmlFor="payment-date">Payment Date</label>
             <input
@@ -370,11 +432,13 @@ export default function Billing() {
               required
               type="number"
               min="0.01"
+              max={outstandingBeforePayment || undefined}
               step="0.01"
               name="amount"
               value={form.amount}
               onChange={updateField}
               placeholder="Enter payment amount"
+              disabled={!selectedInvoice || outstandingBeforePayment <= 0}
             />
 
             <label htmlFor="payment-method">Payment Method</label>
@@ -409,7 +473,16 @@ export default function Billing() {
               <button type="button" className="billing-cancel-btn" onClick={closeModal}>
                 Cancel
               </button>
-              <button type="submit" className="billing-primary-btn" disabled={saving}>
+              <button
+                type="submit"
+                className="billing-primary-btn"
+                disabled={
+                  saving ||
+                  !selectedInvoice ||
+                  outstandingBeforePayment <= 0 ||
+                  (Number(form.amount) || 0) > outstandingBeforePayment
+                }
+              >
                 {saving ? "Saving..." : editingPayment ? "Save Changes" : "Record Payment"}
               </button>
             </div>
